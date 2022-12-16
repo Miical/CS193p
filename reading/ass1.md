@@ -728,3 +728,29 @@ enum Barcode {
 }
 ```
 
+
+
+## 扩展
+
+扩展现有的类、结构、枚举或协议添加新功能
+
+```swift
+extension SomeType {
+  
+}
+```
+
+**计算属性**
+
+```swift
+extension Double {
+    var km: Double { return self * 1_000.0 }
+    var m: Double { return self }
+}
+```
+
+**初始化器**
+
+**方法**
+
+  
