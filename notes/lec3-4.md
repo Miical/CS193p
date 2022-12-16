@@ -10,7 +10,7 @@
 - `View` - 如何呈现给用户。每一次都需要重绘。如果订阅的更改出现变化，将会请求body var进行重绘。提供Intent
 - `ViewModel` - 将Model 连接到View（解释器）。不断跟踪Model变化，公布更改。接受View信息，对模型进行更改
 
-![image-20221215230647014](lec3.assets/image-20221215230647014.png)
+![image-20221215230647014](lec3-4.assets/image-20221215230647014.png)
 
 
 
@@ -24,30 +24,48 @@
   - 默认init: struct会初z始化所有var, class不会
   - 可变性： struct必须显式指明
   - struct是首选
+  
 - `Generics`
   - Array
+  
 - `Functions` & `Closure`
   - (Int, Int) -> Bool
   - (Double) -> Void
   - () -> Void
-
- ## 建立Model
-
-**框架**
-
-```swift
-struct MemoryGame<CardContent> {
-    var card: Array<Card>
-    
-    func choose(_ card: Card) {
-        
+  
+- `enum`
+  
+  - ```swift
+    enum FastFoodMenuItem {
+      case hamburger(numberOfPatties: Int)
+      case fries(size: FryOrderSize)
+      case drink(String, ounces: Int)
+      case cookie
+      
+      func isIncludedInSpecialOrder(number: Int) -> Bool {}
     }
     
-    struct Card {
-        var isFaceUp: Bool
-        var isMatched: Bool
-        var content: CardContent
+    enum FryOrderSize {
+      case Large 
+      case Small
     }
-}
-```
+    
+    // switch
+    switch menuItem {
+      case .hamburger(let pattyCount): print("\(pattyCount)")
+      //...
+    }
+    ```
+  
+- `Optional`
+  
+  - ```swift
+    enum Optional<T> {
+      case none
+      case some(T)
+    }
+    ```
+  
+  - `?`, `!`, `if let`, `??`, `?.()?.()`
+  
 
