@@ -9,56 +9,150 @@ import SwiftUI
 
 struct SetGameView: View {
     @ObservedObject var game: SetGame
+    @Namespace private var dealingNamespace
+    
+    @State private var dealt = Set<Int>()
+    private func deal(_ card: SetGame.Card) {
+        dealt.insert(card.id)
+    }
+    private func isUndealt(_ card: SetGame.Card) -> Bool {
+        !dealt.contains(card.id)
+    }
+    
     
     var body: some View {
         VStack {
-            AspectVGrid(
-                items: game.cards,
-                aspectRatio: 2/3,
-                content: { card in
-                    CardView(card: card, cardColor: game.getCardColor(card: card))
-                        .padding(4)
-                        .onTapGesture { game.choose(card: card) }
-                })
+            gameBody
             Spacer()
+            
             HStack {
                 Spacer()
-                Text("New Game").onTapGesture { game.newGame() }
-                Spacer()
-                Text("Deal 3 More Cards").onTapGesture {
-                    if (game.canDealCards()) {
-                        game.dealThreeMoreCards()
-                    }
-                }.foregroundColor(
-                    (game.canDealCards() ? Color.blue : Color.gray))
-                Spacer()
-            }
-            .padding(.vertical)
+                discardBody
+                deckBody
+            }.frame(height: 100)
+                .padding(.all)
+            newGame
+            .padding(.all)
             .fontWeight(.black)
             .foregroundColor(.blue)
-            
         }
         .padding(.horizontal)
     }
+    
+    var gameBody: some View {
+      AspectVGrid(
+            items: game.cards,
+            aspectRatio: 2/3,
+            content: { card in
+                if (isUndealt(card)) {
+                    Color.clear
+                } else {
+                    CardView(card: card, cardColor: game.getCardColor(card: card))
+                        .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                        .padding(4)
+                        .onTapGesture {
+                            withAnimation {
+                                game.choose(card: card)
+                            }
+                        }
+                }
+            })
+    }
+    
+    var newGame: some View {
+        Button("New Game") {
+            withAnimation {
+                dealt.removeAll()
+                game.newGame()
+            }
+            game.cards.forEach({ card in
+                withAnimation(dealAnimation(for: card)) { deal(card) }
+            })
+        }
+    }
+    
+    var deckBody: some View {
+        ZStack {
+            ForEach((game.deckCards + game.cards).filter({isUndealt($0)})) { card in
+                CardView(card: card, cardColor: game.getCardColor(card: card), isFaceDown: true)
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .zIndex(-Double(getZIndex(card: card)))
+                    .onAppear {
+                        withAnimation(dealAnimation(for: card)) {
+                            if (game.cards.contains(where: { $0.id == card.id })) {
+                                deal(card)
+                            }
+                        }
+                    }
+            }.aspectRatio(2/3, contentMode: .fit)
+        }.onTapGesture {
+            if (game.canDealCards()) {
+                withAnimation {
+                    game.deckCards[0..<3].forEach({deal($0)})
+                    game.dealThreeMoreCards()
+                }
+            }
+        }
+    }
+    
+    private func dealAnimation(for card: SetGame.Card) -> Animation {
+        var delay = 0.0
+        if let index = game.cards.firstIndex(where: { $0.id == card.id }) {
+            delay = Double(index) * (CardConstants.totalDealDuration
+                                     / Double(game.cards.count))
+        }
+        return Animation.easeInOut(duration: CardConstants.dealDuration).delay(delay)
+    }
+    
+    func getZIndex(card: SetGame.Card) -> Int {
+        if let index = game.cards.firstIndex(
+            where: { $0.id == card.id }) {
+            return index
+        } else {
+            return game.cards.count +
+                game.deckCards.firstIndex(where: { $0.id == card.id })!
+        }
+    }
+    
+    var discardBody: some View {
+        ZStack {
+            ForEach(game.discardedCards) { card in
+                CardView(card: card, cardColor: game.getCardColor(card: card))
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+            }.aspectRatio(2/3, contentMode: .fit)
+        }
+    }
+    
+    private struct CardConstants {
+        static var totalDealDuration: Double = 2
+        static var dealDuration: Double = 0.2
+        
+    }
+    
 }
 
 struct CardView: View {
     var card: SetGame.Card
     var cardColor: Color
+    var isFaceDown: Bool = false
     
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 let rect = RoundedRectangle(cornerRadius: min(geometry.size.height, geometry.size.width) * 0.2)
-                rect.fill().foregroundColor(cardColor).opacity(0.2)
-                rect.strokeBorder(lineWidth: 4).opacity(0.6)
-                
-                VStack {
-                    ForEach(0..<card.number, id: \.self) {_ in
-                        singleShape.frame(
-                            width: geometry.size.width / 2,
-                            height: geometry.size.height / 9
-                        )
+                if isFaceDown {
+                    rect.fill().foregroundColor(.blue)
+                } else {
+                    rect.fill().foregroundColor(cardColor).opacity(cardColor == .white ? 1 : 0.2)
+                    rect.strokeBorder(lineWidth: 2).foregroundColor(.blue)
+                        
+                    VStack {
+                        ForEach(0..<card.number, id: \.self) {_ in
+                            singleShape.frame(
+                                width: geometry.size.width / 2,
+                                height: geometry.size.height / 9
+                            )
+                        }
                     }
                 }
             }

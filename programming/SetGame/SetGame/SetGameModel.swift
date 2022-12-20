@@ -11,6 +11,7 @@ struct SetGameModel {
     private(set) var cardsOnDeck: [Card]
     private(set) var cardsOnTable: [Card]
     private(set) var selectedCards: [Card]
+    private(set) var discardedCards: [Card]
     
 
     
@@ -18,6 +19,7 @@ struct SetGameModel {
         selectedCards = []
         cardsOnTable = []
         cardsOnDeck = []
+        discardedCards = []
         var cardsCount = 0
         for number in 1...3 {
             for shape in Shape.allCases {
@@ -46,7 +48,7 @@ struct SetGameModel {
             }
         } else {
             if isMatched {
-                replaceMatchedSet()
+                discardMatchedSet()
                 if (cardsOnTable.contains(where: { $0.id == card.id })) {
                     selectedCards.append(card)
                 }
@@ -65,18 +67,28 @@ struct SetGameModel {
         }
     }
     
-    mutating func replaceMatchedSet() {
+    mutating func discardMatchedSet() {
         for selectedCard in selectedCards {
             cardsOnTable.removeAll(where: { $0.id == selectedCard.id })
         }
+        discardedCards += selectedCards
         selectedCards = []
-        
-        if (cardsOnDeck.count >= 3) {
-            cardsOnTable += cardsOnDeck[0..<3]
-            cardsOnDeck[0..<3] = []
-        }
     }
     
+    mutating func replaceMatchedSet() {
+        if (cardsOnDeck.count >= 3) {
+            for indice in selectedCards.indices {
+                cardsOnTable[cardsOnTable.firstIndex(
+                    where: { $0.id == selectedCards[indice].id })!]
+                = cardsOnDeck[indice]
+            }
+            discardedCards += selectedCards
+            selectedCards = []
+            cardsOnDeck[0..<3] = []
+        } else {
+            discardMatchedSet()
+        }
+    }
     
     struct GameConstant {
         static let initCardsNumber = 12;

@@ -11,9 +11,9 @@ class SetGame: ObservableObject {
     typealias Card = SetGameModel.Card
     @Published private var model = SetGameModel()
     
-    var cards: [Card] {
-        model.cardsOnTable
-    }
+    var cards: [Card] { model.cardsOnTable }
+    var deckCards: [Card] { model.cardsOnDeck }
+    var discardedCards: [Card] { model.discardedCards}
     
     func getCardColor(card: Card) -> Color {
         if (model.selectedCards.count < 3) {
