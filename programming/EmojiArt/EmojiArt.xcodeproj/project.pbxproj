@@ -70,17 +70,17 @@
 		EC03073F263771AD001E9F47 /* EmojiArt */ = {
 			isa = PBXGroup;
 			children = (
+				EC030740263771AD001E9F47 /* EmojiArtApp.swift */,
+				EC030753263772D8001E9F47 /* EmojiArtDocument.swift */,
+				EC030742263771AD001E9F47 /* EmojiArtDocumentView.swift */,
+				EC030756263774A2001E9F47 /* UtilityViews.swift */,
 				ECC0F51626433D58004657CD /* PaletteChooser.swift */,
 				ECC0F51826434363004657CD /* PaletteEditor.swift */,
 				ECC0F51A26434B75004657CD /* PaletteManager.swift */,
 				ECD76A5F264094A2008FA96E /* PaletteStore.swift */,
-				EC030740263771AD001E9F47 /* EmojiArtApp.swift */,
-				EC030753263772D8001E9F47 /* EmojiArtDocument.swift */,
-				EC030742263771AD001E9F47 /* EmojiArtDocumentView.swift */,
 				EC03074F263771AD001E9F47 /* EmojiArtModel.swift */,
 				EC030751263771D0001E9F47 /* EmojiArtModel.Background.swift */,
 				EC030755263774A2001E9F47 /* UtilityExtensions.swift */,
-				EC030756263774A2001E9F47 /* UtilityViews.swift */,
 				EC030744263771AD001E9F47 /* Assets.xcassets */,
 				EC030749263771AD001E9F47 /* Info.plist */,
 				EC030746263771AD001E9F47 /* Preview Content */,
@@ -301,7 +301,7 @@
 		EC03074D263771AD001E9F47 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-iOS";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"EmojiArt/Preview Content\"";
@@ -323,7 +323,7 @@
 		EC03074E263771AD001E9F47 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-iOS";
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"EmojiArt/Preview Content\"";
